@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Workflow Tools — Michigan Works Region 7B</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --navy:#1B2B4B;--navy-light:#2A3F68;
+  --teal:#0A6E60;--teal-light:#E0F2EF;
+  --amber:#D97706;--amber-light:#FEF3C7;
+  --bg:#F5F6F8;--white:#FFFFFF;
+  --text:#111827;--muted:#6B7280;--border:#E5E7EB;
+  --success:#059669;--success-bg:#D1FAE5;
+  --warning:#D97706;--warning-bg:#FEF3C7;
+  --danger:#DC2626;--danger-bg:#FEE2E2;
+  --info:#2563EB;--info-bg:#DBEAFE;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;}
+
+/* Header */
+header{background:var(--navy);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:32px;height:32px;background:var(--teal);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:white;}
+.logo-name{font-size:14px;font-weight:500;color:rgba(255,255,255,0.9);}
+.logo-sub{font-size:11px;color:rgba(255,255,255,0.45);display:block;}
+.header-right{display:flex;align-items:center;gap:12px;}
+.poc-badge{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.75);font-size:12px;padding:4px 10px;border-radius:20px;}
+.contact-btn{background:var(--teal);color:white;border:none;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;}
+.contact-btn:hover{background:#0d8575;}
+
+/* Hero */
+.hero{background:var(--navy);padding:3rem 2rem 2.5rem;}
+.hero-eyebrow{font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;}
+.hero h1{font-family:'DM Serif Display',serif;font-size:34px;font-weight:400;line-height:1.25;margin-bottom:12px;color:white;}
+.hero h1 span{color:#5DCAA5;}
+.hero p{font-size:14px;color:rgba(255,255,255,0.6);max-width:540px;line-height:1.7;}
+
+/* Tool nav tabs */
+.tool-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;overflow-x:auto;}
+.tool-tab{display:flex;align-items:center;gap:8px;padding:14px 18px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:color 0.15s;user-select:none;}
+.tool-tab:hover{color:var(--text);}
+.tool-tab.active{color:var(--navy);border-bottom-color:var(--navy);}
+.tool-tab i{font-size:16px;}
+
+/* Main */
+.main{max-width:1080px;margin:0 auto;padding:2rem;}
+.tool-screen{display:none;}
+.tool-screen.active{display:block;}
+
+/* Tool header */
+.tool-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;}
+.tool-title{font-size:20px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.tool-desc{font-size:13px;color:var(--muted);max-width:520px;}
+.build-badge{background:var(--teal-light);color:var(--teal);font-size:12px;font-weight:500;padding:5px 12px;border-radius:20px;white-space:nowrap;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+
+/* Stat row */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;}
+.stat-card .s-label{font-size:12px;color:var(--muted);margin-bottom:4px;}
+.stat-card .s-value{font-size:26px;font-weight:600;color:var(--navy);line-height:1;}
+.stat-card .s-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;}
+.badge-success{background:var(--success-bg);color:var(--success);}
+.badge-warning{background:var(--warning-bg);color:var(--warning);}
+.badge-danger{background:var(--danger-bg);color:var(--danger);}
+.badge-info{background:var(--info-bg);color:var(--info);}
+.badge-gray{background:#F3F4F6;color:#374151;}
+
+/* Card */
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;}
+th{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);background:#FAFAFA;}
+td{font-size:13px;padding:11px 12px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#FAFAFA;}
+
+/* Filter bar */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:1rem;flex-wrap:wrap;}
+.filter-btn{background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:500;padding:6px 14px;border-radius:20px;cursor:pointer;font-family:inherit;transition:all 0.12s;}
+.filter-btn:hover{border-color:var(--navy);color:var(--navy);}
+.filter-btn.active{background:var(--navy);border-color:var(--navy);color:white;}
+.search-input{flex:1;max-width:280px;padding:7px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);outline:none;}
+.search-input:focus{border-color:var(--teal);}
+
+/* Form */
+.field-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px;}
+input[type=text],textarea,select{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:var(--text);outline:none;background:var(--white);}
+input[type=text]:focus,textarea:focus{border-color:var(--teal);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{display:flex;flex-direction:column;}
+.section-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin:1.25rem 0 0.75rem;padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+/* Upload zone */
+.upload-zone{border:1.5px dashed var(--border);border-radius:10px;padding:2rem;text-align:center;background:#FAFAFA;cursor:pointer;transition:all 0.15s;}
+.upload-zone:hover{border-color:var(--teal);background:var(--teal-light);}
+.upload-zone i{font-size:36px;color:var(--muted);margin-bottom:10px;display:block;}
+.file-pill{display:inline-flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-size:13px;margin:4px;}
+.remove{color:var(--muted);cursor:pointer;margin-left:4px;}
+
+/* Wizard */
+.wiz-nav{display:flex;border-bottom:1px solid var(--border);background:var(--white);border-radius:10px 10px 0 0;padding:0 1.25rem;}
+.wiz-step{display:flex;align-items:center;gap:8px;padding:14px 16px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:color 0.15s;}
+.wiz-step.active{color:var(--navy);border-bottom-color:var(--navy);}
+.wiz-step.done{color:var(--success);}
+.wiz-step .num{width:22px;height:22px;border-radius:50%;background:#F3F4F6;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.wiz-step.active .num{background:var(--navy);color:white;border-color:var(--navy);}
+.wiz-step.done .num{background:var(--success-bg);color:var(--success);border-color:var(--success);}
+.wiz-screen{display:none;}
+.wiz-screen.active{display:block;}
+
+/* Preview */
+.preview-area{background:#FAFAFA;border:1px solid var(--border);border-radius:8px;padding:1.25rem;font-size:14px;line-height:1.8;min-height:200px;}
+.preview-area p{margin-bottom:1rem;}
+.preview-area p:last-child{margin-bottom:0;}
+
+/* Accuracy rows */
+.acc-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:13px;}
+.acc-row .a-label{color:var(--muted);width:180px;flex-shrink:0;}
+.acc-row .a-bar{flex:1;height:5px;background:#E5E7EB;border-radius:3px;overflow:hidden;}
+.acc-row .a-fill{height:100%;background:var(--success);border-radius:3px;}
+.acc-row .a-check{color:var(--success);font-weight:500;white-space:nowrap;}
+
+/* Export rows */
+.exp-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
+.exp-row:last-child{border-bottom:none;}
+.exp-row i{font-size:28px;width:36px;text-align:center;}
+.exp-row .e-info p{font-size:14px;font-weight:600;margin-bottom:2px;}
+.exp-row .e-info span{font-size:12px;color:var(--muted);}
+
+/* Info note */
+.info-note{background:var(--info-bg);border-radius:8px;padding:10px 14px;font-size:13px;color:#1E40AF;display:flex;align-items:flex-start;gap:8px;margin-top:12px;}
+.info-note i{font-size:16px;margin-top:2px;flex-shrink:0;}
+
+/* Staff grid */
+.staff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.staff-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+.staff-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;margin-bottom:10px;}
+.s-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+.s-county{font-size:12px;color:var(--muted);margin-bottom:12px;}
+.cl-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px;}
+.cl-bar{height:7px;background:#E5E7EB;border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.cl-fill{height:100%;border-radius:4px;}
+
+/* Partner grid */
+.partner-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.partner-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;}
+.p-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px;}
+.p-name{font-size:14px;font-weight:600;margin-bottom:3px;}
+.p-county{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.p-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.p-tag{font-size:11px;background:#F3F4F6;color:#374151;padding:2px 8px;border-radius:4px;}
+
+/* Progress bars in tables */
+.prog-wrap{height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden;width:80px;}
+.prog-fill{height:100%;border-radius:3px;}
+
+/* Buttons */
+.btn{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid var(--border);background:var(--white);color:var(--text);transition:all 0.12s;}
+.btn:hover{background:#F9FAFB;}
+.btn-primary{background:var(--navy);color:white;border-color:var(--navy);}
+.btn-primary:hover{background:var(--navy-light);}
+.btn-sm{padding:4px 10px;font-size:12px;}
+.btn-row{display:flex;justify-content:flex-end;gap:8px;margin-top:1.25rem;}
+.ml-auto{margin-left:auto;}
+
+/* Footer */
+footer{background:var(--navy);color:rgba(255,255,255,0.55);font-size:13px;padding:1.5rem 2rem;margin-top:3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+footer a{color:rgba(255,255,255,0.55);text-decoration:none;}
+footer a:hover{color:white;}
+footer strong{color:white;}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">
+    <div class="logo-mark">NT</div>
+    <div>
+      <span class="logo-name">Northern Tech Currents</span>
+      <span class="logo-sub">Michigan Works Region 7B — AI Tool Demo</span>
+    </div>
+  </a>
+  <div class="header-right">
+    <span class="poc-badge">Proof of Concept Demo</span>
+    <button class="contact-btn" onclick="window.location='tel:9897870260'">Contact Mike</button>
+  </div>
+</header>
+
+<div class="hero">
+  <p class="hero-eyebrow">Northern Tech Currents × Michigan Works Region 7B</p>
+  <h1>AI workflow tools built for<br><span>workforce development leaders</span></h1>
+  <p>Five purpose-built tools designed around how executive directors actually work — board reporting, grant management, partner coordination, employer tracking, and staff visibility. Each one deployable in days, not months.</p>
+</div>
+
+<nav class="tool-nav">
+  <div class="tool-tab active" id="tab-t1" onclick="showTool('t1')"><i class="ti ti-file-text"></i> Board Report Generator</div>
+  <div class="tool-tab" id="tab-t2" onclick="showTool('t2')"><i class="ti ti-calendar-due"></i> Grant Deadline Tracker</div>
+  <div class="tool-tab" id="tab-t3" onclick="showTool('t3')"><i class="ti ti-building-community"></i> Partner Directory</div>
+  <div class="tool-tab" id="tab-t4" onclick="showTool('t4')"><i class="ti ti-briefcase"></i> Employer Inquiry Log</div>
+  <div class="tool-tab" id="tab-t5" onclick="showTool('t5')"><i class="ti ti-users"></i> Staff Caseload Dashboard</div>
+</nav>
+
+<div class="main">
+
+<!-- ===== TOOL 1: Board Report Generator ===== -->
+<div class="tool-screen active" id="t1">
+  <div class="tool-header">
+    <div>
+      <div class="tool-title">Board Report Generator</div>
+      <div class="tool-desc">AI generates quarterly board reports in the executive director's voice — pulled directly from past report examples and this period's metrics.</div>
+    </div>
+    <span class="build-badge"><i class="ti ti-sparkles"></i> AI-powered · ~2 week build</span>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div class="wiz-nav">
+      <div class="wiz-step active" id="ws1" onclick="showWiz(1)"><span class="num">1</span> Reference reports</div>
+      <div class="wiz-step" id="ws2" onclick="showWiz(2)"><span class="num">2</span> Enter metrics</div>
+      <div class="wiz-step" id="ws3" onclick="showWiz(3)"><span class="num">3</span> Preview &amp; edit</div>
+      <div class="wiz-step" id="ws4" onclick="showWiz(4)"><span class="num">4</span> Export</div>
+    </div>
+    <div style="padding:1.25rem;">
+
+      <div class="wiz-screen active" id="wiz1">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;">Upload 2–3 past board reports. The system extracts writing voice, tone, and section structure from these examples — one-time setup.</p>
+        <div class="upload-zone">
+          <i class="ti ti-upload"></i>
+          <p style="font-weight:500;margin-bottom:4px;">Drop files here or click to browse</p>
+          <p style="font-size:12px;color:var(--muted);">PDF or Word documents accepted</p>
+        </div>
+        <div style="margin-top:12px;">
+          <span class="file-pill"><i class="ti ti-file-text" style="color:var(--muted);font-size:14px;"></i> Board_Report_Q3_2024.pdf <span class="remove">✕</span></span>
+          <span class="file-pill"><i class="ti ti-file-text" style="color:var(--muted);font-size:14px;"></i> Board_Report_Q2_2024.pdf <span class="remove">✕</span></span>
+          <span class="file-pill"><i class="ti ti-file-text" style="color:var(--muted);font-size:14px;"></i> Board_Report_Q1_2024.pdf <span class="remove">✕</span></span>
+        </div>
+        <div class="info-note">
+          <i class="ti ti-check-circle"></i>
+          <span>3 reports analyzed. Voice and tone profile built. Every future report will match this writing style automatically.</span>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="showWiz(2)">Continue to metrics →</button></div>
+      </div>
+
+      <div class="wiz-screen" id="wiz2">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1rem;">Enter key numbers for this reporting period. Every metric is placed accurately in the generated report — nothing is estimated.</p>
+        <div class="form-grid">
+          <div class="form-group"><label class="field-label">Period</label><input type="text" value="Q2 2025 (Apr – Jun)"></div>
+          <div class="form-group"><label class="field-label">Report date</label><input type="text" value="July 18, 2025"></div>
+        </div>
+        <div class="section-label">Job seeker outcomes</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="field-label">Job placements</label><input type="text" value="187"></div>
+          <div class="form-group"><label class="field-label">Active enrollments</label><input type="text" value="412"></div>
+          <div class="form-group"><label class="field-label">Training completions</label><input type="text" value="94"></div>
+          <div class="form-group"><label class="field-label">Avg. starting wage</label><input type="text" value="$18.40 / hr"></div>
+        </div>
+        <div class="section-label">Employer engagement</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="field-label">Businesses served</label><input type="text" value="63"></div>
+          <div class="form-group"><label class="field-label">Job orders received</label><input type="text" value="228"></div>
+        </div>
+        <div class="section-label">Budget highlights</div>
+        <div class="form-grid">
+          <div class="form-group"><label class="field-label">Active grants</label><input type="text" value="21"></div>
+          <div class="form-group"><label class="field-label">Total funds expended</label><input type="text" value="$1.24M"></div>
+        </div>
+        <div class="section-label">Notable items this period</div>
+        <textarea style="min-height:68px;">Launched new CDL training cohort in partnership with Iosco ISD. Expanded OJT agreements with 4 new manufacturing employers in Ogemaw County.</textarea>
+        <div class="btn-row">
+          <button class="btn" onclick="showWiz(1)">← Back</button>
+          <button class="btn btn-primary" onclick="showWiz(3)">Generate report →</button>
+        </div>
+      </div>
+
+      <div class="wiz-screen" id="wiz3">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <p style="font-size:13px;color:var(--muted);">Generated in Mark's voice from your uploaded reference reports. Edit inline before approving.</p>
+          <span class="badge badge-success"><i class="ti ti-check"></i> Voice matched</span>
+        </div>
+        <div class="preview-area" contenteditable="true">
+          <p><strong>Q2 2025 Executive Director's Report</strong><br>Michigan Works! Region 7B &mdash; July 18, 2025</p>
+          <p>This quarter continued to reflect the dedication and momentum our team brings to workforce development across our six-county region. Between April and June, we placed 187 individuals into employment &mdash; meaningful progress toward our annual targets and a continued demonstration of the value our services provide to job seekers and regional employers alike.</p>
+          <p>Active enrollment stands at 412 participants, with 94 individuals completing training credentials during the period. Average starting wages for placed participants reached $18.40 per hour, underscoring the quality of the job matches our career advisors are facilitating each day.</p>
+          <p>On the employer side, we served 63 businesses and received 228 job orders &mdash; strong indicators that our business services team continues to build meaningful trust with the regional employer community. Of particular note, we expanded our On-the-Job Training agreements to include four new manufacturing employers in Ogemaw County, and we launched a new CDL training cohort in direct response to regional transportation sector demand.</p>
+          <p>Across our 21 active grants, total expenditures for the quarter reached $1.24 million, maintaining healthy spend rates and positioning us well heading into Q3.</p>
+        </div>
+        <p style="font-size:12px;color:var(--muted);margin-top:6px;">Click anywhere in the report to edit directly before exporting.</p>
+        <div class="section-label">Data accuracy check</div>
+        <div class="acc-row"><span class="a-label">Job placements</span><div class="a-bar"><div class="a-fill" style="width:100%"></div></div><span class="a-check">187 ✓</span></div>
+        <div class="acc-row"><span class="a-label">Active enrollments</span><div class="a-bar"><div class="a-fill" style="width:100%"></div></div><span class="a-check">412 ✓</span></div>
+        <div class="acc-row"><span class="a-label">Businesses served</span><div class="a-bar"><div class="a-fill" style="width:100%"></div></div><span class="a-check">63 ✓</span></div>
+        <div class="acc-row"><span class="a-label">Funds expended</span><div class="a-bar"><div class="a-fill" style="width:100%"></div></div><span class="a-check">$1.24M ✓</span></div>
+        <div class="btn-row">
+          <button class="btn" onclick="showWiz(2)">← Edit metrics</button>
+          <button class="btn btn-primary" onclick="showWiz(4)">Approve &amp; export →</button>
+        </div>
+      </div>
+
+      <div class="wiz-screen" id="wiz4">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:1.25rem;">Your report is ready. Download and drop directly into the board packet.</p>
+        <div class="card">
+          <div class="exp-row">
+            <i class="ti ti-file-word" style="color:#2563EB;"></i>
+            <div class="e-info"><p>Word Document (.docx)</p><span>Fully editable &mdash; letterhead, formatting, and styles preserved</span></div>
+            <button class="btn btn-primary ml-auto">Download</button>
+          </div>
+          <div class="exp-row">
+            <i class="ti ti-file-type-pdf" style="color:#DC2626;"></i>
+            <div class="e-info"><p>PDF Document</p><span>Print-ready for board packet distribution</span></div>
+            <button class="btn ml-auto">Download</button>
+          </div>
+          <div class="exp-row">
+            <i class="ti ti-copy" style="color:var(--muted);"></i>
+            <div class="e-info"><p>Copy to clipboard</p><span>Paste directly into any existing document</span></div>
+            <button class="btn ml-auto">Copy</button>
+          </div>
+        </div>
+        <div class="section-label">Report history</div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table>
+            <thead><tr><th>Report</th><th>Generated</th><th>Format</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>Q2 2025 Board Report</td><td>Today</td><td><span class="badge badge-success">Word + PDF</span></td><td><button class="btn btn-sm">Re-export</button></td></tr>
+              <tr><td>Q1 2025 Board Report</td><td>Apr 15, 2025</td><td><span class="badge badge-gray">Word</span></td><td><button class="btn btn-sm">Re-export</button></td></tr>
+              <tr><td>Q4 2024 Board Report</td><td>Jan 12, 2025</td><td><span class="badge badge-gray">PDF</span></td><td><button class="btn btn-sm">Re-export</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-row"><button class="btn btn-primary" onclick="showWiz(1)">Generate another →</button></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOOL 2: Grant Deadline Tracker ===== -->
+<div class="tool-screen" id="t2">
+  <div class="tool-header">
+    <div>
+      <div class="tool-title">Grant Deadline Tracker</div>
+      <div class="tool-desc">All 21 active grants in one view — reporting deadlines, award amounts, and compliance flags surfaced automatically with email alerts.</div>
+    </div>
+    <span class="build-badge"><i class="ti ti-bolt"></i> Quick build · 1–2 weeks</span>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="s-label">Active grants</div><div class="s-value">21</div><div class="s-sub">6 federal, 15 state</div></div>
+    <div class="stat-card"><div class="s-label">Due within 30 days</div><div class="s-value" style="color:var(--warning);">4</div><div class="s-sub">2 require immediate action</div></div>
+    <div class="stat-card"><div class="s-label">On track</div><div class="s-value" style="color:var(--success);">16</div><div class="s-sub">No issues flagged</div></div>
+    <div class="stat-card"><div class="s-label">Total awarded FY25</div><div class="s-value">$3.1M</div><div class="s-sub">Across all programs</div></div>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterGrants('all',this)">All grants</button>
+    <button class="filter-btn" onclick="filterGrants('urgent',this)">Urgent</button>
+    <button class="filter-btn" onclick="filterGrants('soon',this)">Due soon</button>
+    <button class="filter-btn" onclick="filterGrants('track',this)">On track</button>
+    <input class="search-input" type="text" placeholder="Search grants..." oninput="searchGrants(this.value)">
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table><thead><tr><th>Grant name</th><th>Funder</th><th>Award</th><th>Report due</th><th>Days remaining</th><th>Status</th></tr></thead>
+    <tbody id="grant-tbody">
+      <tr data-status="urgent"><td><strong>Strong Families Initiative</strong></td><td>MDHHS</td><td>$45,200</td><td>Jul 20, 2025</td><td><strong style="color:var(--danger);">6 days</strong></td><td><span class="badge badge-danger">Urgent</span></td></tr>
+      <tr data-status="soon"><td><strong>PATH Program</strong></td><td>MDHHS</td><td>$67,500</td><td>Jul 25, 2025</td><td><strong style="color:var(--warning);">11 days</strong></td><td><span class="badge badge-warning">Due soon</span></td></tr>
+      <tr data-status="soon"><td><strong>Going PRO Talent Fund</strong></td><td>MEDC</td><td>$89,000</td><td>Jul 31, 2025</td><td><strong style="color:var(--warning);">17 days</strong></td><td><span class="badge badge-warning">Due soon</span></td></tr>
+      <tr data-status="soon"><td><strong>Registered Apprenticeship</strong></td><td>DOL</td><td>$112,400</td><td>Aug 5, 2025</td><td><strong style="color:var(--warning);">22 days</strong></td><td><span class="badge badge-warning">Due soon</span></td></tr>
+      <tr data-status="track"><td><strong>WIOA Adult</strong></td><td>DOL / LEO</td><td>$187,400</td><td>Aug 30, 2025</td><td>47 days</td><td><span class="badge badge-success">On track</span></td></tr>
+      <tr data-status="track"><td><strong>WIOA Youth</strong></td><td>DOL / LEO</td><td>$142,800</td><td>Aug 30, 2025</td><td>47 days</td><td><span class="badge badge-success">On track</span></td></tr>
+      <tr data-status="track"><td><strong>WIOA Dislocated Worker</strong></td><td>DOL / LEO</td><td>$203,600</td><td>Sep 15, 2025</td><td>63 days</td><td><span class="badge badge-success">On track</span></td></tr>
+      <tr data-status="track"><td><strong>Wagner-Peyser Employment Svc</strong></td><td>DOL</td><td>$156,300</td><td>Oct 1, 2025</td><td>79 days</td><td><span class="badge badge-success">On track</span></td></tr>
+      <tr data-status="track"><td><strong>Perkins CTE</strong></td><td>MDE</td><td>$38,400</td><td>Sep 30, 2025</td><td>78 days</td><td><span class="badge badge-success">On track</span></td></tr>
+      <tr data-status="track"><td><strong>Michigan Reconnect</strong></td><td>LEO</td><td>$74,100</td><td>Oct 15, 2025</td><td>93 days</td><td><span class="badge badge-success">On track</span></td></tr>
+    </tbody></table>
+  </div>
+  <p style="font-size:12px;color:var(--muted);margin-top:8px;">Showing 10 of 21 grants. Automated email alerts fire at 30, 14, and 7 days before each deadline.</p>
+</div>
+
+<!-- ===== TOOL 3: Partner Directory ===== -->
+<div class="tool-screen" id="t3">
+  <div class="tool-header">
+    <div>
+      <div class="tool-title">Partner Directory</div>
+      <div class="tool-desc">Searchable hub of all education, human services, and employer partners across the six-county region — filterable by county or service type.</div>
+    </div>
+    <span class="build-badge"><i class="ti ti-bolt"></i> Quick build · 1 week</span>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterPartners('all',this)">All partners</button>
+    <button class="filter-btn" onclick="filterPartners('education',this)">Education</button>
+    <button class="filter-btn" onclick="filterPartners('services',this)">Human services</button>
+    <button class="filter-btn" onclick="filterPartners('employer',this)">Employers</button>
+    <input class="search-input" type="text" placeholder="Search by name or county..." oninput="searchPartners(this.value)">
+  </div>
+  <div class="partner-grid" id="partner-grid">
+    <div class="partner-card" data-type="education">
+      <div class="p-icon" style="background:var(--info-bg);color:var(--info);"><i class="ti ti-school"></i></div>
+      <div class="p-name">Iosco ISD</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Iosco County</div>
+      <div class="p-tags"><span class="p-tag">CTE Programs</span><span class="p-tag">CDL Training</span><span class="p-tag">Adult Ed</span></div>
+    </div>
+    <div class="partner-card" data-type="education">
+      <div class="p-icon" style="background:var(--teal-light);color:var(--teal);"><i class="ti ti-building"></i></div>
+      <div class="p-name">Kirtland Community College</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Roscommon County</div>
+      <div class="p-tags"><span class="p-tag">Higher Ed</span><span class="p-tag">Workforce Training</span><span class="p-tag">Credentials</span></div>
+    </div>
+    <div class="partner-card" data-type="services">
+      <div class="p-icon" style="background:var(--amber-light);color:var(--amber);"><i class="ti ti-heart"></i></div>
+      <div class="p-name">Arenac County DHS</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Arenac County</div>
+      <div class="p-tags"><span class="p-tag">Human Services</span><span class="p-tag">Benefits</span><span class="p-tag">TANF / PATH</span></div>
+    </div>
+    <div class="partner-card" data-type="education">
+      <div class="p-icon" style="background:var(--info-bg);color:var(--info);"><i class="ti ti-school"></i></div>
+      <div class="p-name">Clare-Gladwin RESD</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Clare / Gladwin</div>
+      <div class="p-tags"><span class="p-tag">Adult Ed</span><span class="p-tag">GED / HiSET</span><span class="p-tag">ESL</span></div>
+    </div>
+    <div class="partner-card" data-type="employer">
+      <div class="p-icon" style="background:#F3F4F6;color:#374151;"><i class="ti ti-building-factory"></i></div>
+      <div class="p-name">Saint-Gobain</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Gladwin County</div>
+      <div class="p-tags"><span class="p-tag">Manufacturing</span><span class="p-tag">OJT Partner</span><span class="p-tag">Going PRO</span></div>
+    </div>
+    <div class="partner-card" data-type="services">
+      <div class="p-icon" style="background:var(--success-bg);color:var(--success);"><i class="ti ti-users"></i></div>
+      <div class="p-name">Northern Transformation Corp</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Multi-county</div>
+      <div class="p-tags"><span class="p-tag">Economic Dev</span><span class="p-tag">Entrepreneurship</span><span class="p-tag">Community</span></div>
+    </div>
+    <div class="partner-card" data-type="employer">
+      <div class="p-icon" style="background:#F3F4F6;color:#374151;"><i class="ti ti-activity-heartbeat"></i></div>
+      <div class="p-name">West Branch Regional Medical</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Ogemaw County</div>
+      <div class="p-tags"><span class="p-tag">Healthcare</span><span class="p-tag">OJT Partner</span><span class="p-tag">CNA Training</span></div>
+    </div>
+    <div class="partner-card" data-type="education">
+      <div class="p-icon" style="background:var(--info-bg);color:var(--info);"><i class="ti ti-school"></i></div>
+      <div class="p-name">Oscoda Area Schools</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Iosco County</div>
+      <div class="p-tags"><span class="p-tag">Adult Ed</span><span class="p-tag">Work-Based Learning</span></div>
+    </div>
+    <div class="partner-card" data-type="services">
+      <div class="p-icon" style="background:var(--amber-light);color:var(--amber);"><i class="ti ti-home"></i></div>
+      <div class="p-name">Clare County DHS</div>
+      <div class="p-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Clare County</div>
+      <div class="p-tags"><span class="p-tag">Human Services</span><span class="p-tag">MiFamily</span><span class="p-tag">Bridges</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOOL 4: Employer Inquiry Log ===== -->
+<div class="tool-screen" id="t4">
+  <div class="tool-header">
+    <div>
+      <div class="tool-title">Employer Inquiry Log</div>
+      <div class="tool-desc">Track every business contact, job order, and placement outcome from first call through successful hire — nothing falls through the cracks.</div>
+    </div>
+    <span class="build-badge"><i class="ti ti-bolt"></i> Quick build · 1–2 weeks</span>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="s-label">New inquiries</div><div class="s-value" style="color:var(--info);">12</div><div class="s-sub">This month</div></div>
+    <div class="stat-card"><div class="s-label">In progress</div><div class="s-value" style="color:var(--warning);">8</div><div class="s-sub">Active referrals</div></div>
+    <div class="stat-card"><div class="s-label">Placed this month</div><div class="s-value" style="color:var(--success);">23</div><div class="s-sub">↑ 4 vs last month</div></div>
+    <div class="stat-card"><div class="s-label">Avg. response time</div><div class="s-value">1.4d</div><div class="s-sub">Business days</div></div>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterEmployers('all',this)">All</button>
+    <button class="filter-btn" onclick="filterEmployers('new',this)">New</button>
+    <button class="filter-btn" onclick="filterEmployers('progress',this)">In progress</button>
+    <button class="filter-btn" onclick="filterEmployers('placed',this)">Placed</button>
+    <input class="search-input" type="text" placeholder="Search employers...">
+  </div>
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table><thead><tr><th>Employer</th><th>Position</th><th>Openings</th><th>Date received</th><th>Assigned to</th><th>Status</th></tr></thead>
+    <tbody id="employer-tbody">
+      <tr data-status="new"><td><strong>St. Joseph Health System</strong></td><td>CNA</td><td>4</td><td>Jun 15</td><td>&mdash; <span class="badge badge-warning">Unassigned</span></td><td><span class="badge badge-info">New</span></td></tr>
+      <tr data-status="new"><td><strong>Meijer Distribution Center</strong></td><td>Warehouse Associate</td><td>8</td><td>Jun 18</td><td>&mdash; <span class="badge badge-warning">Unassigned</span></td><td><span class="badge badge-info">New</span></td></tr>
+      <tr data-status="progress"><td><strong>Weyerhaeuser</strong></td><td>Forklift Operator</td><td>2</td><td>Jun 12</td><td>Sarah M.</td><td><span class="badge badge-warning">In progress</span></td></tr>
+      <tr data-status="progress"><td><strong>Kalitta Air</strong></td><td>Line Mechanic</td><td>3</td><td>Jun 20</td><td>Tom K.</td><td><span class="badge badge-warning">In progress</span></td></tr>
+      <tr data-status="progress"><td><strong>Clare County Road Commission</strong></td><td>Equipment Operator</td><td>1</td><td>Jun 22</td><td>Sarah M.</td><td><span class="badge badge-warning">In progress</span></td></tr>
+      <tr data-status="placed"><td><strong>Oscoda Area Schools</strong></td><td>Paraprofessional</td><td>2</td><td>Jun 1</td><td>Lisa T.</td><td><span class="badge badge-success">Placed</span></td></tr>
+      <tr data-status="placed"><td><strong>West Branch Regional Medical</strong></td><td>Medical Assistant</td><td>2</td><td>May 28</td><td>Tom K.</td><td><span class="badge badge-success">Placed</span></td></tr>
+      <tr data-status="placed"><td><strong>Consumers Energy</strong></td><td>Line Technician</td><td>4</td><td>May 20</td><td>Sarah M.</td><td><span class="badge badge-success">Placed</span></td></tr>
+    </tbody></table>
+  </div>
+</div>
+
+<!-- ===== TOOL 5: Staff Caseload Dashboard ===== -->
+<div class="tool-screen" id="t5">
+  <div class="tool-header">
+    <div>
+      <div class="tool-title">Staff Caseload Dashboard</div>
+      <div class="tool-desc">Real-time view of active participant caseloads per career advisor — spot overloads and redistribute before service quality drops.</div>
+    </div>
+    <span class="build-badge"><i class="ti ti-bolt"></i> Quick build · 1 week</span>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="s-label">Total active participants</div><div class="s-value">242</div><div class="s-sub">Across 6 advisors</div></div>
+    <div class="stat-card"><div class="s-label">Avg. caseload</div><div class="s-value">40</div><div class="s-sub">Per advisor</div></div>
+    <div class="stat-card"><div class="s-label">At capacity</div><div class="s-value" style="color:var(--danger);">1</div><div class="s-sub">Needs redistribution</div></div>
+    <div class="stat-card"><div class="s-label">Capacity available</div><div class="s-value" style="color:var(--success);">2</div><div class="s-sub">Can absorb new caseload</div></div>
+  </div>
+  <div class="staff-grid">
+    <div class="staff-card">
+      <div class="staff-avatar" style="background:var(--info-bg);color:var(--info);">SM</div>
+      <div class="s-name">Sarah Mitchell</div>
+      <div class="s-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Iosco County</div>
+      <div class="cl-label"><span>Caseload</span><span><strong>47</strong> / 55</span></div>
+      <div class="cl-bar"><div class="cl-fill" style="width:85%;background:var(--warning);"></div></div>
+      <span class="badge badge-warning">85% capacity</span>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar" style="background:var(--teal-light);color:var(--teal);">TK</div>
+      <div class="s-name">Tom Kowalski</div>
+      <div class="s-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Clare County</div>
+      <div class="cl-label"><span>Caseload</span><span><strong>38</strong> / 55</span></div>
+      <div class="cl-bar"><div class="cl-fill" style="width:69%;background:var(--success);"></div></div>
+      <span class="badge badge-success">69% capacity</span>
+    </div>
+    <div class="staff-card" style="border-color:var(--danger);border-width:1.5px;">
+      <div class="staff-avatar" style="background:var(--danger-bg);color:var(--danger);">JP</div>
+      <div class="s-name">Jennifer Parks</div>
+      <div class="s-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Gladwin County</div>
+      <div class="cl-label"><span>Caseload</span><span><strong>52</strong> / 55</span></div>
+      <div class="cl-bar"><div class="cl-fill" style="width:94%;background:var(--danger);"></div></div>
+      <span class="badge badge-danger">94% — needs relief</span>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar" style="background:#F3F4F6;color:#374151;">RC</div>
+      <div class="s-name">Robert Chen</div>
+      <div class="s-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Ogemaw County</div>
+      <div class="cl-label"><span>Caseload</span><span><strong>29</strong> / 55</span></div>
+      <div class="cl-bar"><div class="cl-fill" style="width:53%;background:var(--success);"></div></div>
+      <span class="badge badge-success">53% capacity</span>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar" style="background:var(--amber-light);color:var(--amber);">LT</div>
+      <div class="s-name">Lisa Torres</div>
+      <div class="s-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Arenac County</div>
+      <div class="cl-label"><span>Caseload</span><span><strong>41</strong> / 55</span></div>
+      <div class="cl-bar"><div class="cl-fill" style="width:75%;background:var(--warning);"></div></div>
+      <span class="badge badge-warning">75% capacity</span>
+    </div>
+    <div class="staff-card">
+      <div class="staff-avatar" style="background:var(--success-bg);color:var(--success);">MD</div>
+      <div class="s-name">Mark Davis</div>
+      <div class="s-county"><i class="ti ti-map-pin" style="font-size:12px;"></i> Roscommon County</div>
+      <div class="cl-label"><span>Caseload</span><span><strong>35</strong> / 55</span></div>
+      <div class="cl-bar"><div class="cl-fill" style="width:64%;background:var(--success);"></div></div>
+      <span class="badge badge-success">64% capacity</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<footer>
+  <div><strong>Northern Tech Currents</strong> &mdash; AI Implementation for Northern Michigan Organizations</div>
+  <div>Mike Ehinger &nbsp;·&nbsp; <a href="tel:9897870260">989-787-0260</a> &nbsp;·&nbsp; <a href="https://www.linkedin.com/in/mike-ehinger" target="_blank">LinkedIn</a> &nbsp;·&nbsp; <a href="https://calendly.com/mike-ehinger-northerntechcurrents/30min" target="_blank">Book a call</a></div>
+</footer>
+
+<script>
+function showTool(id){
+  document.querySelectorAll('.tool-screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tool-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  window.scrollTo({top:document.querySelector('.tool-nav').offsetTop-60,behavior:'smooth'});
+}
+function showWiz(n){
+  for(let i=1;i<=4;i++){
+    document.getElementById('wiz'+i).classList.toggle('active',i===n);
+    const s=document.getElementById('ws'+i);
+    s.classList.toggle('active',i===n);
+    if(i<n)s.classList.add('done');else s.classList.remove('done');
+  }
+}
+function filterGrants(type,btn){
+  document.querySelectorAll('#grant-tbody tr').forEach(r=>{
+    r.style.display=(type==='all'||r.dataset.status===type)?'':'none';
+  });
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function searchGrants(q){
+  const lq=q.toLowerCase();
+  document.querySelectorAll('#grant-tbody tr').forEach(r=>{
+    r.style.display=r.textContent.toLowerCase().includes(lq)?'':'none';
+  });
+}
+function filterPartners(type,btn){
+  document.querySelectorAll('#partner-grid .partner-card').forEach(c=>{
+    c.style.display=(type==='all'||c.dataset.type===type)?'':'none';
+  });
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function searchPartners(q){
+  const lq=q.toLowerCase();
+  document.querySelectorAll('#partner-grid .partner-card').forEach(c=>{
+    c.style.display=c.textContent.toLowerCase().includes(lq)?'':'none';
+  });
+}
+function filterEmployers(type,btn){
+  const map={new:'new',progress:'progress',placed:'placed'};
+  document.querySelectorAll('#employer-tbody tr').forEach(r=>{
+    r.style.display=(type==='all'||r.dataset.status===map[type])?'':'none';
+  });
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
